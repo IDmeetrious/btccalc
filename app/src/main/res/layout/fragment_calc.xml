@@ -1,6 +1,272 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/calc_usd_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="Dollar USD"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calc_from_usd_tv" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/calc_btc_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="Bitcoin BTC"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calc_from_btc_tv" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/calc_btc_btn2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="Ruble RUB"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calc_to_rub_tv" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/calc_usd_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:gravity="end"
+        android:hint="1000"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/calc_usd_btn"
+        app:layout_constraintTop_toTopOf="@+id/calc_usd_btn" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/calc_btc_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:gravity="end"
+        android:hint="1000"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/calc_usd_btn"
+        app:layout_constraintTop_toTopOf="@+id/calc_btc_btn" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/calc_rub_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:gravity="end"
+        android:hint="1000"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/calc_usd_btn"
+        app:layout_constraintTop_toTopOf="@+id/calc_btc_btn2" />
+
+    <TextView
+        android:id="@+id/calc_from_usd_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="from"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/calc_from_btc_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="from"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calc_usd_btn" />
+
+    <TextView
+        android:id="@+id/calc_to_rub_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="to"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calc_btc_btn" />
+
+    <TextView
+        android:id="@+id/calc_info_date_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:text="Current information at 25 june 2021, 14:31"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calc_rub_et" />
+
+    <TextView
+        android:id="@+id/calc_info_usd_rate_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="12dp"
+        android:text="1 USD = 72,.13 RUB"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calc_info_date_tv" />
+
+    <TextView
+        android:id="@+id/calc_info_btc_rate_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1 BTC = 45 309.12 USD"
+        app:layout_constraintEnd_toStartOf="@+id/calc_info_usd_rate_tv"
+        app:layout_constraintTop_toTopOf="@+id/calc_info_usd_rate_tv" />
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calc_info_usd_rate_tv">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/sevenBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="7" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/eightBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="8" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/nineBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="9" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/backSpaceBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:src="@drawable/ic_backspace_24"
+                android:tint="@color/design_default_color_primary" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fourBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="4" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fiveBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="3" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/sixBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="6" />
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/swapCurrencyBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:src="@drawable/ic_swap_24"
+                android:tint="@color/design_default_color_primary" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/oneBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="1" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/twoBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="2" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/threeBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="3" />
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/calcDialogBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:src="@drawable/ic_calculate_24"
+                android:tint="@color/design_default_color_primary" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/zeroBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="0" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/doubleZeroBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="00" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/comaBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="," />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/clearBtn"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="c" />
+        </TableRow>
+    </TableLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

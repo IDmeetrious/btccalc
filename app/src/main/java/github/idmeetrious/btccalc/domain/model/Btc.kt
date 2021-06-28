@@ -8,5 +8,5 @@ data class Btc(
     val baseId: String = "BTC",
     @SerializedName("asset_id_quote")
     val quoteId: String = "USD",
-    val rate: Double = 3260.3514321215056208129867667
+    val rate: Double = 0.0
 )
