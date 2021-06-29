@@ -1,8 +1,6 @@
 package github.idmeetrious.btccalc.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,17 +9,26 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import github.idmeetrious.btccalc.databinding.FragmentCalcBinding
 import github.idmeetrious.btccalc.viewmodel.CalcViewModel
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import layout.CurrencyDialogFragment
 
 private const val TAG = "CalcFragment"
-class CalcFragment: Fragment() {
+
+class CalcFragment : Fragment() {
+    private var currencyDialog: CurrencyDialogFragment? = null
     private val viewModel by lazy {
         ViewModelProvider(this).get(CalcViewModel::class.java)
     }
     private var _binding: FragmentCalcBinding? = null
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (currencyDialog == null) currencyDialog = CurrencyDialogFragment()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,14 +44,38 @@ class CalcFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Turn of showing keyboard
-        binding.calcUsdEt.showSoftInputOnFocus = false
-        binding.calcRubEt.showSoftInputOnFocus = false
-        binding.calcBtcEt.showSoftInputOnFocus = false
+        binding.calcToCurrencyEt.apply {
+            showSoftInputOnFocus = false
+            setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    hint = ""
+                    text?.length?.let {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            setSelection(it)
+                        }
+                    }
+                } else hint = "0"
+            }
+        }
+
+        binding.calcFromCurrencyEt.apply {
+            showSoftInputOnFocus = false
+            setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    hint = ""
+                    text?.length?.let {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            setSelection(it)
+                        }
+                    }
+                } else hint = "0"
+            }
+        }
 
         // Fetch Btc rate from view model
 
         CoroutineScope(Dispatchers.IO).launch {
-            viewModel.rubRate.collect{
+            viewModel.rubRate.collect {
                 it?.rates?.value?.let { double ->
                     Log.i(TAG, "--> onViewCreated: ${double}")
                 }
@@ -70,116 +101,99 @@ class CalcFragment: Fragment() {
         }
 
         binding.zeroBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.text?.append("0")
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.text?.append("0")
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.text?.append("0")
+            if (binding.calcToCurrencyEt.isFocused)
+                binding.calcToCurrencyEt.text?.append("0")
+            else if (binding.calcFromCurrencyEt.isFocused)
+                binding.calcFromCurrencyEt.text?.append("0")
         }
         binding.oneBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.text?.append("1")
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.text?.append("1")
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.text?.append("1")
+            if (binding.calcToCurrencyEt.isFocused)
+                binding.calcToCurrencyEt.text?.append("1")
+            else if (binding.calcFromCurrencyEt.isFocused)
+                binding.calcFromCurrencyEt.text?.append("1")
         }
         binding.twoBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.text?.append("2")
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.text?.append("2")
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.text?.append("2")
+            if (binding.calcToCurrencyEt.isFocused)
+                binding.calcToCurrencyEt.text?.append("2")
+            else if (binding.calcFromCurrencyEt.isFocused)
+                binding.calcFromCurrencyEt.text?.append("2")
         }
         binding.threeBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.text?.append("3")
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.text?.append("3")
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.text?.append("3")
+            if (binding.calcToCurrencyEt.isFocused)
+                binding.calcToCurrencyEt.text?.append("3")
+            else if (binding.calcFromCurrencyEt.isFocused)
+                binding.calcFromCurrencyEt.text?.append("3")
         }
         binding.fourBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.text?.append("4")
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.text?.append("4")
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.text?.append("4")
+            if (binding.calcToCurrencyEt.isFocused)
+                binding.calcToCurrencyEt.text?.append("4")
+            else if (binding.calcFromCurrencyEt.isFocused)
+                binding.calcFromCurrencyEt.text?.append("4")
         }
         binding.fiveBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.text?.append("5")
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.text?.append("5")
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.text?.append("5")
+            if (binding.calcToCurrencyEt.isFocused)
+                binding.calcToCurrencyEt.text?.append("5")
+            else if (binding.calcFromCurrencyEt.isFocused)
+                binding.calcFromCurrencyEt.text?.append("5")
         }
         binding.sixBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.text?.append("6")
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.text?.append("6")
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.text?.append("6")
+            if (binding.calcToCurrencyEt.isFocused)
+                binding.calcToCurrencyEt.text?.append("6")
+            else if (binding.calcFromCurrencyEt.isFocused)
+                binding.calcFromCurrencyEt.text?.append("6")
         }
         binding.sevenBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.text?.append("7")
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.text?.append("7")
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.text?.append("7")
+            if (binding.calcToCurrencyEt.isFocused)
+                binding.calcToCurrencyEt.text?.append("7")
+            else if (binding.calcFromCurrencyEt.isFocused)
+                binding.calcFromCurrencyEt.text?.append("7")
         }
         binding.eightBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.text?.append("8")
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.text?.append("8")
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.text?.append("8")
+            if (binding.calcToCurrencyEt.isFocused)
+                binding.calcToCurrencyEt.text?.append("8")
+            else if (binding.calcFromCurrencyEt.isFocused)
+                binding.calcFromCurrencyEt.text?.append("8")
         }
         binding.nineBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.text?.append("9")
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.text?.append("9")
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.text?.append("9")
+            if (binding.calcToCurrencyEt.isFocused)
+                binding.calcToCurrencyEt.text?.append("9")
+            else if (binding.calcFromCurrencyEt.isFocused)
+                binding.calcFromCurrencyEt.text?.append("9")
         }
         binding.doubleZeroBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.text?.append("00")
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.text?.append("00")
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.text?.append("00")
+            if (binding.calcToCurrencyEt.isFocused)
+                binding.calcToCurrencyEt.text?.append("00")
+            else if (binding.calcFromCurrencyEt.isFocused)
+                binding.calcFromCurrencyEt.text?.append("00")
         }
         binding.comaBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.text?.append(".")
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.text?.append(".")
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.text?.append(".")
+            if (binding.calcToCurrencyEt.isFocused)
+                binding.calcToCurrencyEt.text?.append(".")
+            else if (binding.calcFromCurrencyEt.isFocused)
+                binding.calcFromCurrencyEt.text?.append(".")
         }
         binding.clearBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.text?.clear()
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.text?.clear()
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.text?.clear()
+            if (binding.calcToCurrencyEt.isFocused)
+                binding.calcToCurrencyEt.text?.clear()
+            else if (binding.calcFromCurrencyEt.isFocused)
+                binding.calcFromCurrencyEt.text?.clear()
         }
         binding.backSpaceBtn.setOnClickListener {
-            if (binding.calcUsdEt.isFocused)
-                binding.calcUsdEt.setText(binding.calcUsdEt.text?.dropLast(1))
-            else if (binding.calcRubEt.isFocused)
-                binding.calcRubEt.setText(binding.calcRubEt.text?.dropLast(1))
-            else if (binding.calcBtcEt.isFocused)
-                binding.calcBtcEt.setText(binding.calcBtcEt.text?.dropLast(1))
+            if (binding.calcToCurrencyEt.isFocused) {
+                binding.calcToCurrencyEt.setText(binding.calcToCurrencyEt.text?.dropLast(1))
+                binding.calcToCurrencyEt.let { et ->
+                    et.text?.let {
+                        et.setSelection(it.length)
+                    }
+                }
+            } else if (binding.calcFromCurrencyEt.isFocused) {
+                binding.calcFromCurrencyEt.setText(binding.calcFromCurrencyEt.text?.dropLast(1))
+                binding.calcFromCurrencyEt.let { et ->
+                    et.text?.let {
+                        et.setSelection(it.length)
+                    }
+                }
+            }
         }
         binding.swapCurrencyBtn.setOnClickListener {
             /** Created by ID
@@ -192,6 +206,12 @@ class CalcFragment: Fragment() {
              * date: 28-Jun-21, 2:22 PM
              * TODO: show calculator dialog
              */
+        }
+        binding.calcUsdBtn.setOnClickListener {
+            currencyDialog?.show(childFragmentManager, "CurrencyDialogFragment")
+        }
+        binding.calcBtcBtn.setOnClickListener {
+            currencyDialog?.show(childFragmentManager, "CurrencyDialogFragment")
         }
 
 
