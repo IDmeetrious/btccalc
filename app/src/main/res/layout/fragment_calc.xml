@@ -6,110 +6,82 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/calc_usd_btn"
+        android:id="@+id/calcBtcBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
-        android:text="Dollar USD"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="Bitcoin BTC"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/calc_from_usd_tv"
         app:layout_constraintTop_toBottomOf="@+id/calc_from_usd_tv" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/calc_btc_btn"
+        android:id="@+id/calcUsdBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
-        android:text="Bitcoin BTC"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calc_from_btc_tv" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/calc_btc_btn2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:text="Ruble RUB"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="Dollar USD"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/calcBtcBtn"
+        app:layout_constraintStart_toStartOf="@+id/calcBtcBtn"
         app:layout_constraintTop_toBottomOf="@+id/calc_to_rub_tv" />
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/calc_usd_et"
+        android:id="@+id/calcFromCurrencyEt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_edit_text"
         android:ems="10"
+        android:textSize="22sp"
         android:gravity="end"
-        android:hint="1000"
+        android:hint="0"
         android:inputType="numberDecimal"
+        app:layout_constraintBottom_toBottomOf="@+id/calcBtcBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/calc_usd_btn"
-        app:layout_constraintTop_toTopOf="@+id/calc_usd_btn" />
+        app:layout_constraintStart_toEndOf="@+id/calcBtcBtn"
+        app:layout_constraintTop_toTopOf="@+id/calcBtcBtn"
+        app:textInputLayoutFocusedRectEnabled="true" />
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/calc_btc_et"
+        android:id="@+id/calcToCurrencyEt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_edit_text"
         android:ems="10"
+        android:textSize="22sp"
         android:gravity="end"
-        android:hint="1000"
+        android:hint="0"
         android:inputType="numberDecimal"
+        app:layout_constraintBottom_toBottomOf="@+id/calcUsdBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/calc_usd_btn"
-        app:layout_constraintTop_toTopOf="@+id/calc_btc_btn" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/calc_rub_et"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:gravity="end"
-        android:hint="1000"
-        android:inputType="numberDecimal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/calc_usd_btn"
-        app:layout_constraintTop_toTopOf="@+id/calc_btc_btn2" />
+        app:layout_constraintStart_toStartOf="@+id/calcFromCurrencyEt"
+        app:layout_constraintTop_toTopOf="@+id/calcUsdBtn" />
 
     <TextView
         android:id="@+id/calc_from_usd_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:text="from"
+        android:layout_marginTop="24dp"
+        android:text="From Currency"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/calc_from_btc_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="from"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calc_usd_btn" />
 
     <TextView
         android:id="@+id/calc_to_rub_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="to"
+        android:layout_marginTop="24dp"
+        android:text="To Currency"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calc_btc_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/calcBtcBtn" />
 
     <TextView
         android:id="@+id/calc_info_date_tv"
@@ -119,7 +91,7 @@
         android:layout_marginEnd="16dp"
         android:text="Current information at 25 june 2021, 14:31"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calc_rub_et" />
+        app:layout_constraintTop_toBottomOf="@+id/calcToCurrencyEt" />
 
     <TextView
         android:id="@+id/calc_info_usd_rate_tv"
@@ -141,35 +113,42 @@
 
     <TableLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calc_info_usd_rate_tv">
+        app:layout_constraintStart_toStartOf="parent">
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/sevenBtn"
+                style="@style/Widget.Calc.Button"
                 android:layout_width="88dp"
                 android:layout_height="88dp"
+
                 android:layout_marginHorizontal="4dp"
                 android:text="7" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/eightBtn"
+                style="@style/Widget.Calc.Button"
                 android:layout_width="88dp"
                 android:layout_height="88dp"
+
                 android:layout_marginHorizontal="4dp"
                 android:text="8" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/nineBtn"
+                style="@style/Widget.Calc.Button"
                 android:layout_width="88dp"
                 android:layout_height="88dp"
+
                 android:layout_marginHorizontal="4dp"
                 android:text="9" />
 
@@ -181,27 +160,38 @@
                 android:src="@drawable/ic_backspace_24"
                 android:tint="@color/design_default_color_primary" />
         </TableRow>
+
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fourBtn"
+                style="@style/Widget.Calc.Button"
                 android:layout_width="88dp"
                 android:layout_height="88dp"
+
                 android:layout_marginHorizontal="4dp"
                 android:text="4" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fiveBtn"
+                style="@style/Widget.Calc.Button"
                 android:layout_width="88dp"
                 android:layout_height="88dp"
+
                 android:layout_marginHorizontal="4dp"
                 android:text="3" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/sixBtn"
+                style="@style/Widget.Calc.Button"
                 android:layout_width="88dp"
                 android:layout_height="88dp"
+
                 android:layout_marginHorizontal="4dp"
                 android:text="6" />
+
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/swapCurrencyBtn"
                 android:layout_width="88dp"
@@ -210,27 +200,38 @@
                 android:src="@drawable/ic_swap_24"
                 android:tint="@color/design_default_color_primary" />
         </TableRow>
+
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/oneBtn"
+                style="@style/Widget.Calc.Button"
                 android:layout_width="88dp"
                 android:layout_height="88dp"
+
                 android:layout_marginHorizontal="4dp"
                 android:text="1" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/twoBtn"
+                style="@style/Widget.Calc.Button"
                 android:layout_width="88dp"
                 android:layout_height="88dp"
+
                 android:layout_marginHorizontal="4dp"
                 android:text="2" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/threeBtn"
+                style="@style/Widget.Calc.Button"
                 android:layout_width="88dp"
                 android:layout_height="88dp"
+
                 android:layout_marginHorizontal="4dp"
                 android:text="3" />
+
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/calcDialogBtn"
                 android:layout_width="88dp"
@@ -239,29 +240,38 @@
                 android:src="@drawable/ic_calculate_24"
                 android:tint="@color/design_default_color_primary" />
         </TableRow>
+
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/zeroBtn"
+                style="@style/Widget.Calc.Button"
                 android:layout_width="88dp"
                 android:layout_height="88dp"
                 android:layout_marginHorizontal="4dp"
                 android:text="0" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/doubleZeroBtn"
+                style="@style/Widget.Calc.Button"
                 android:layout_width="88dp"
                 android:layout_height="88dp"
                 android:layout_marginHorizontal="4dp"
                 android:text="00" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/comaBtn"
+                style="@style/Widget.Calc.Button"
                 android:layout_width="88dp"
                 android:layout_height="88dp"
                 android:layout_marginHorizontal="4dp"
                 android:text="," />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/clearBtn"
+                style="@style/Widget.Calc.Button"
                 android:layout_width="88dp"
                 android:layout_height="88dp"
                 android:layout_marginHorizontal="4dp"
