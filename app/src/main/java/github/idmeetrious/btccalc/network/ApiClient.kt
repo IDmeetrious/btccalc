@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiClient {
     private val coin = Retrofit.Builder()
-        .baseUrl("https://rest.coinapi.io")
+        .baseUrl("https://api.nomics.com")
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .build()
