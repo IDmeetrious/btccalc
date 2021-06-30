@@ -1,34 +1,22 @@
 package github.idmeetrious.btccalc.network
 
-import github.idmeetrious.btccalc.domain.model.Btc
-import github.idmeetrious.btccalc.domain.model.Rub
-import github.idmeetrious.btccalc.domain.model.Usd
+import github.idmeetrious.btccalc.domain.model.Currency
+import github.idmeetrious.btccalc.domain.model.Exchange
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.Query
-import retrofit2.http.QueryMap
 
 interface AuthRequest {
-    @Headers("X-CoinAPI-Key: 8A18F7F7-28FC-4FBF-9479-922B43B5A748")
-    @GET("/v1/exchangerate/BTC/USD")
-    fun btcToUsd(): Single<Btc>
+    @GET("/v1/currencies/ticker")
+    fun getCurrency(
+        @Query("key") apiKey: String = "41a4f1763afe4f54231c1b1548844b413809bed7",
+        @Query("ids") ids: String = "BTC",
+        @Query("interval") interval: String = "1d",
+        @Query("convert") convert: String = "USD"
+    ): Single<List<Currency>>
 
-    @Headers("X-CoinAPI-Key: 8A18F7F7-28FC-4FBF-9479-922B43B5A748")
-    @GET("/v1/exchangerate/BTC/RUB")
-    fun btcToRub(): Single<Btc>
-
-    @GET("/latest")
-    fun usdToRub(
-//        @Query("access_key") key: String = "08d3ecaa80c855861b016b0d5ef5790f",
-        @Query("base") base: String = "USD",
-        @Query("symbols") quote: String = "RUB"
-    ): Single<Usd>
-
-    @GET("/latest")
-    fun rubToUsd(
-//        @Query("access_key") key: String = "08d3ecaa80c855861b016b0d5ef5790f",
-        @Query("base") base: String = "RUB",
-        @Query("symbols") quote: String = "USD"
-    ): Single<Rub>
+    @GET("/v1/exchange-rates")
+    fun getExchangeRates(
+        @Query("key") apiKey: String = "41a4f1763afe4f54231c1b1548844b413809bed7"
+    ): Single<List<Exchange>>
 }

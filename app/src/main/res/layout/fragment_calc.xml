@@ -34,16 +34,14 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/rounded_edit_text"
-        android:ems="10"
         android:textSize="22sp"
         android:gravity="end"
         android:hint="0"
-        android:inputType="numberDecimal"
+        android:inputType="text"
         app:layout_constraintBottom_toBottomOf="@+id/calcBtcBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/calcBtcBtn"
-        app:layout_constraintTop_toTopOf="@+id/calcBtcBtn"
-        app:textInputLayoutFocusedRectEnabled="true" />
+        app:layout_constraintTop_toTopOf="@+id/calcBtcBtn" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/calcToCurrencyEt"
@@ -51,11 +49,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:background="@drawable/rounded_edit_text"
-        android:ems="10"
         android:textSize="22sp"
         android:gravity="end"
         android:hint="0"
-        android:inputType="numberDecimal"
+        android:inputType="text"
         app:layout_constraintBottom_toBottomOf="@+id/calcUsdBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/calcFromCurrencyEt"

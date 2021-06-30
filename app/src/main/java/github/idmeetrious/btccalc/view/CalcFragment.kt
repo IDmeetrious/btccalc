@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import github.idmeetrious.btccalc.databinding.FragmentCalcBinding
@@ -14,11 +15,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import layout.CurrencyDialogFragment
+import kotlin.math.floor
 
 private const val TAG = "CalcFragment"
 
 class CalcFragment : Fragment() {
     private var currencyDialog: CurrencyDialogFragment? = null
+    private var convertedId: String = "USD"
     private val viewModel by lazy {
         ViewModelProvider(this).get(CalcViewModel::class.java)
     }
@@ -70,41 +73,56 @@ class CalcFragment : Fragment() {
                     }
                 } else hint = "0"
             }
+            addTextChangedListener { et ->
+                viewModel.currencyRate.value?.price?.let { price ->
+                    et?.let {
+                        if (it.isNotEmpty() && !it.endsWith("0.", true)){
+                            if (!(it.length == 1 && it.endsWith("0"))){
+                                val value = floor("$et".toDouble() * price)
+                                Log.i(TAG, "--> onViewCreated: $value")
+                                binding.calcToCurrencyEt.setText("$value")
+                            }
+                        } else binding.calcToCurrencyEt.text?.clear()
+                    }
+                }
+            }
         }
 
         // Fetch Btc rate from view model
-
-        CoroutineScope(Dispatchers.IO).launch {
-            viewModel.rubRate.collect {
-                it?.rates?.value?.let { double ->
-                    Log.i(TAG, "--> onViewCreated: ${double}")
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.currencyRate.collect {
+                it?.let { currency ->
+                    binding.calcInfoDateTv.text = "${currency.date}"
+                    currency.price.let { double ->
+                        binding.calcInfoBtcRateTv.text = "1 ${currency.id} = $double $convertedId, "
+                    }
                 }
             }
         }
         CoroutineScope(Dispatchers.Main).launch {
-            viewModel.btcRate.collect {
-                it?.let {
-                    binding.calcInfoDateTv.text = "${it.time}"
-                }
-                it?.rate?.let { double ->
-                    binding.calcInfoBtcRateTv.text = "1 BTC = $double USD, "
-                }
-            }
-        }
-        CoroutineScope(Dispatchers.Main).launch {
-            viewModel.usdRate.collect {
-                it?.rates?.value.let { double ->
-                    Log.i(TAG, "--> onViewCreated: $double")
-                    binding.calcInfoUsdRateTv.text = "1 USD = ${double} RUB"
+            viewModel.exchangeRates.collect {
+                it.let { list ->
+                    Log.i(TAG, "--> onViewCreated: ${list.size}")
                 }
             }
         }
 
         binding.zeroBtn.setOnClickListener {
-            if (binding.calcToCurrencyEt.isFocused)
-                binding.calcToCurrencyEt.text?.append("0")
-            else if (binding.calcFromCurrencyEt.isFocused)
-                binding.calcFromCurrencyEt.text?.append("0")
+            if (binding.calcToCurrencyEt.isFocused){
+
+                binding.calcToCurrencyEt.text?.apply {
+                    if (!startsWith("0")) append("0")
+                    else if (startsWith("0.")) append("0")
+
+                }
+            }
+            else if (binding.calcFromCurrencyEt.isFocused){
+                binding.calcFromCurrencyEt.text?.apply {
+                    if (!startsWith("0")) append("0")
+                    else if (startsWith("0.")) append("0")
+
+                }
+            }
         }
         binding.oneBtn.setOnClickListener {
             if (binding.calcToCurrencyEt.isFocused)
@@ -161,16 +179,33 @@ class CalcFragment : Fragment() {
                 binding.calcFromCurrencyEt.text?.append("9")
         }
         binding.doubleZeroBtn.setOnClickListener {
-            if (binding.calcToCurrencyEt.isFocused)
-                binding.calcToCurrencyEt.text?.append("00")
-            else if (binding.calcFromCurrencyEt.isFocused)
-                binding.calcFromCurrencyEt.text?.append("00")
+            if (binding.calcToCurrencyEt.isFocused){
+
+                binding.calcToCurrencyEt.text?.apply {
+                    if (!startsWith("0")) append("00")
+                    else if (startsWith("0.")) append("00")
+                }
+            }
+            else if (binding.calcFromCurrencyEt.isFocused){
+                binding.calcFromCurrencyEt.text?.apply {
+                    if (!startsWith("0")) append("00")
+                    else if (startsWith("0.")) append("00")
+                }
+            }
         }
         binding.comaBtn.setOnClickListener {
-            if (binding.calcToCurrencyEt.isFocused)
-                binding.calcToCurrencyEt.text?.append(".")
-            else if (binding.calcFromCurrencyEt.isFocused)
-                binding.calcFromCurrencyEt.text?.append(".")
+            if (binding.calcToCurrencyEt.isFocused){
+                binding.calcToCurrencyEt.text?.apply {
+                    if (isNotEmpty() && !contains(".")) append(".")
+                    else if(isEmpty()) append("0.")
+                }
+            }
+            else if (binding.calcFromCurrencyEt.isFocused){
+                binding.calcFromCurrencyEt.text?.apply {
+                    if (isNotEmpty() && !contains(".")) append(".")
+                    else if(isEmpty()) append("0.")
+                }
+            }
         }
         binding.clearBtn.setOnClickListener {
             if (binding.calcToCurrencyEt.isFocused)
@@ -187,10 +222,14 @@ class CalcFragment : Fragment() {
                     }
                 }
             } else if (binding.calcFromCurrencyEt.isFocused) {
-                binding.calcFromCurrencyEt.setText(binding.calcFromCurrencyEt.text?.dropLast(1))
-                binding.calcFromCurrencyEt.let { et ->
-                    et.text?.let {
-                        et.setSelection(it.length)
+                val etText = binding.calcFromCurrencyEt.text
+                if (!etText.isNullOrEmpty()) {
+                    val lastLetter = etText.dropLast(1)
+                    if (lastLetter.length > 0 && lastLetter != "" && lastLetter.isNotEmpty()) {
+                        binding.calcFromCurrencyEt.setText(lastLetter)
+                        binding.calcFromCurrencyEt.setSelection(lastLetter.length)
+                    } else {
+                        binding.calcFromCurrencyEt.text?.clear()
                     }
                 }
             }
@@ -216,13 +255,6 @@ class CalcFragment : Fragment() {
 
 
     }
-
-//    override fun onStart() {
-//        super.onStart()
-//        viewModel.getBtcToUsd()
-//        viewModel.getRubToUsd()
-//        viewModel.getUsdToRub()
-//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
