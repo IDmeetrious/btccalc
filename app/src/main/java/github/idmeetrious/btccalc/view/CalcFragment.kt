@@ -1,10 +1,15 @@
 package github.idmeetrious.btccalc.view
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.Spanned
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.isDigitsOnly
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -73,11 +78,36 @@ class CalcFragment : Fragment() {
                     }
                 } else hint = "0"
             }
+            addTextChangedListener(object : TextWatcher{
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                    Log.i(TAG, "--> beforeTextChanged: $s")
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    Log.i(TAG, "--> onTextChanged: $s")
+
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+                    Log.i(TAG, "--> afterTextChanged: $s")
+                    if (s != null) {
+                        if (s.length > 1 && s[0].toString() == "0" && s[1].toString() != "."){
+                            setText(s[1].toString())
+                            setSelection(s[1].toString().length)
+                        }
+                    }
+                }
+            })
             addTextChangedListener { et ->
                 viewModel.currencyRate.value?.price?.let { price ->
                     et?.let {
                         if (it.isNotEmpty() && !it.endsWith("0.", true)){
-                            if (!(it.length == 1 && it.endsWith("0"))){
+                            if (!(it.length == 1 && it.endsWith("0"))) {
                                 val value = floor("$et".toDouble() * price)
                                 Log.i(TAG, "--> onViewCreated: $value")
                                 binding.calcToCurrencyEt.setText("$value")
