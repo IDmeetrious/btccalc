@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/calcBtcBtn"
+        android:id="@+id/calcFromBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -17,14 +17,14 @@
         app:layout_constraintTop_toBottomOf="@+id/calc_from_usd_tv" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/calcUsdBtn"
+        android:id="@+id/calcToBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="Dollar USD"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="@+id/calcBtcBtn"
-        app:layout_constraintStart_toStartOf="@+id/calcBtcBtn"
+        app:layout_constraintEnd_toEndOf="@+id/calcFromBtn"
+        app:layout_constraintStart_toStartOf="@+id/calcFromBtn"
         app:layout_constraintTop_toBottomOf="@+id/calc_to_rub_tv" />
 
     <com.google.android.material.textfield.TextInputEditText
@@ -38,10 +38,10 @@
         android:gravity="end"
         android:hint="0"
         android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="@+id/calcBtcBtn"
+        app:layout_constraintBottom_toBottomOf="@+id/calcFromBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/calcBtcBtn"
-        app:layout_constraintTop_toTopOf="@+id/calcBtcBtn" />
+        app:layout_constraintStart_toEndOf="@+id/calcFromBtn"
+        app:layout_constraintTop_toTopOf="@+id/calcFromBtn" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/calcToCurrencyEt"
@@ -53,10 +53,10 @@
         android:gravity="end"
         android:hint="0"
         android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="@+id/calcUsdBtn"
+        app:layout_constraintBottom_toBottomOf="@+id/calcToBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/calcFromCurrencyEt"
-        app:layout_constraintTop_toTopOf="@+id/calcUsdBtn" />
+        app:layout_constraintTop_toTopOf="@+id/calcToBtn" />
 
     <TextView
         android:id="@+id/calc_from_usd_tv"
@@ -78,7 +78,7 @@
         android:text="To Currency"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calcBtcBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/calcFromBtn" />
 
     <TextView
         android:id="@+id/calc_info_date_tv"
@@ -86,6 +86,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
+        android:textSize="16sp"
         android:text="Current information at 25 june 2021, 14:31"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calcToCurrencyEt" />
@@ -94,19 +95,21 @@
         android:id="@+id/calc_info_usd_rate_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginTop="8dp"
         android:text="1 USD = 72,.13 RUB"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calc_info_date_tv" />
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/calc_info_btc_rate_tv"
+        app:layout_constraintTop_toBottomOf="@+id/calc_info_btc_rate_tv" />
 
     <TextView
         android:id="@+id/calc_info_btc_rate_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="1 BTC = 45 309.12 USD"
-        app:layout_constraintEnd_toStartOf="@+id/calc_info_usd_rate_tv"
-        app:layout_constraintTop_toTopOf="@+id/calc_info_usd_rate_tv" />
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/calc_info_date_tv"
+        app:layout_constraintTop_toBottomOf="@+id/calc_info_date_tv" />
 
     <TableLayout
         android:layout_width="wrap_content"
