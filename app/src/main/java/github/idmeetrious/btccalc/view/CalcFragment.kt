@@ -1,37 +1,39 @@
 package github.idmeetrious.btccalc.view
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputFilter
-import android.text.Spanned
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.text.isDigitsOnly
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import github.idmeetrious.btccalc.databinding.FragmentCalcBinding
+import github.idmeetrious.btccalc.domain.model.Exchange
 import github.idmeetrious.btccalc.viewmodel.CalcViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import io.reactivex.rxjava3.disposables.Disposable
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import layout.CurrencyDialogFragment
+import java.text.SimpleDateFormat
 import kotlin.math.floor
 
 private const val TAG = "CalcFragment"
 
 class CalcFragment : Fragment() {
     private var currencyDialog: CurrencyDialogFragment? = null
-    private var convertedId: String = "USD"
-    private val viewModel by lazy {
-        ViewModelProvider(this).get(CalcViewModel::class.java)
-    }
+
+    private val viewModel: CalcViewModel by activityViewModels()
     private var _binding: FragmentCalcBinding? = null
     private val binding get() = _binding!!
+
+    private var fromBtnText = "Bitcoin BTC"
+    private var toBtnText = "Dollar USD"
+
+    private val job = CoroutineScope(Dispatchers.Default) + Job()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +52,7 @@ class CalcFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         // Turn of showing keyboard
         binding.calcToCurrencyEt.apply {
@@ -78,7 +81,7 @@ class CalcFragment : Fragment() {
                     }
                 } else hint = "0"
             }
-            addTextChangedListener(object : TextWatcher{
+            addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -96,7 +99,7 @@ class CalcFragment : Fragment() {
                 override fun afterTextChanged(s: Editable?) {
                     Log.i(TAG, "--> afterTextChanged: $s")
                     if (s != null) {
-                        if (s.length > 1 && s[0].toString() == "0" && s[1].toString() != "."){
+                        if (s.length > 1 && s[0].toString() == "0" && s[1].toString() != ".") {
                             setText(s[1].toString())
                             setSelection(s[1].toString().length)
                         }
@@ -106,7 +109,7 @@ class CalcFragment : Fragment() {
             addTextChangedListener { et ->
                 viewModel.currencyRate.value?.price?.let { price ->
                     et?.let {
-                        if (it.isNotEmpty() && !it.endsWith("0.", true)){
+                        if (it.isNotEmpty() && !it.endsWith("0.", true)) {
                             if (!(it.length == 1 && it.endsWith("0"))) {
                                 val value = floor("$et".toDouble() * price)
                                 Log.i(TAG, "--> onViewCreated: $value")
@@ -118,35 +121,31 @@ class CalcFragment : Fragment() {
             }
         }
 
-        // Fetch Btc rate from view model
         CoroutineScope(Dispatchers.Main).launch {
-            viewModel.currencyRate.collect {
-                it?.let { currency ->
-                    binding.calcInfoDateTv.text = "${currency.date}"
-                    currency.price.let { double ->
-                        binding.calcInfoBtcRateTv.text = "1 ${currency.id} = $double $convertedId, "
-                    }
-                }
-            }
-        }
-        CoroutineScope(Dispatchers.Main).launch {
-            viewModel.exchangeRates.collect {
-                it.let { list ->
+            viewModel.exchangeRates.collect { list ->
+
+                if (list.isNotEmpty()) {
                     Log.i(TAG, "--> onViewCreated: ${list.size}")
+                    binding.calcInfoDateTv.text = today()
+                    binding.calcInfoBtcRateTv.text = formatRate(list.first {
+                        it.currency == getFromBtnSuffix()
+                    }) + " ${getToBtnSuffix()}"
+                    binding.calcInfoUsdRateTv.text = formatRuble(list.first {
+                        it.currency == "RUB"
+                    })
                 }
             }
         }
 
         binding.zeroBtn.setOnClickListener {
-            if (binding.calcToCurrencyEt.isFocused){
+            if (binding.calcToCurrencyEt.isFocused) {
 
                 binding.calcToCurrencyEt.text?.apply {
                     if (!startsWith("0")) append("0")
                     else if (startsWith("0.")) append("0")
 
                 }
-            }
-            else if (binding.calcFromCurrencyEt.isFocused){
+            } else if (binding.calcFromCurrencyEt.isFocused) {
                 binding.calcFromCurrencyEt.text?.apply {
                     if (!startsWith("0")) append("0")
                     else if (startsWith("0.")) append("0")
@@ -209,14 +208,13 @@ class CalcFragment : Fragment() {
                 binding.calcFromCurrencyEt.text?.append("9")
         }
         binding.doubleZeroBtn.setOnClickListener {
-            if (binding.calcToCurrencyEt.isFocused){
+            if (binding.calcToCurrencyEt.isFocused) {
 
                 binding.calcToCurrencyEt.text?.apply {
                     if (!startsWith("0")) append("00")
                     else if (startsWith("0.")) append("00")
                 }
-            }
-            else if (binding.calcFromCurrencyEt.isFocused){
+            } else if (binding.calcFromCurrencyEt.isFocused) {
                 binding.calcFromCurrencyEt.text?.apply {
                     if (!startsWith("0")) append("00")
                     else if (startsWith("0.")) append("00")
@@ -224,16 +222,15 @@ class CalcFragment : Fragment() {
             }
         }
         binding.comaBtn.setOnClickListener {
-            if (binding.calcToCurrencyEt.isFocused){
+            if (binding.calcToCurrencyEt.isFocused) {
                 binding.calcToCurrencyEt.text?.apply {
                     if (isNotEmpty() && !contains(".")) append(".")
-                    else if(isEmpty()) append("0.")
+                    else if (isEmpty()) append("0.")
                 }
-            }
-            else if (binding.calcFromCurrencyEt.isFocused){
+            } else if (binding.calcFromCurrencyEt.isFocused) {
                 binding.calcFromCurrencyEt.text?.apply {
                     if (isNotEmpty() && !contains(".")) append(".")
-                    else if(isEmpty()) append("0.")
+                    else if (isEmpty()) append("0.")
                 }
             }
         }
@@ -276,14 +273,86 @@ class CalcFragment : Fragment() {
              * TODO: show calculator dialog
              */
         }
-        binding.calcUsdBtn.setOnClickListener {
-            currencyDialog?.show(childFragmentManager, "CurrencyDialogFragment")
-        }
-        binding.calcBtcBtn.setOnClickListener {
-            currencyDialog?.show(childFragmentManager, "CurrencyDialogFragment")
+        binding.calcFromBtn.apply {
+            setOnClickListener {
+                currencyDialog?.show(childFragmentManager, "CurrencyDialogFragment")
+//                job.launch {
+//                    viewModel.currency.collect {
+//                        it?.let {
+//                            this@apply.text = it.name
+//                        }
+//                    }
+//                }
+//                job.launch {
+////                    viewModel.exchange.collect {
+////                        it?.let {
+////                            this@apply.text = it.currency
+////                        }
+////                    }
+//                    viewModel.exchange.single()?.let {
+//                        this@apply.text = it.currency
+//                    }
+//                }
+
+            }
         }
 
 
+        binding.calcToBtn.apply {
+            setOnClickListener {
+
+                currencyDialog?.show(childFragmentManager, "CurrencyDialogFragment")
+//                job.launch {
+//                    viewModel.currency.collect {
+//                        it?.let {
+//                            this@apply.text = it.name
+//                        }
+//                    }
+//                }
+//                job.launch {
+////                    viewModel.exchange.collect {
+////                        it?.let {
+////                            toBtnText = it.currency
+////                        }
+////                    }
+//                    viewModel.exchange.single()?.let {
+//                        this@apply.text = it.currency
+//                    }
+//                }
+
+            }
+        }
+    }
+
+    private fun formatRate(exch: Exchange): String {
+        return "1 ${exch.currency} = ${exch.rate}"
+    }
+
+    private fun formatRuble(exch: Exchange): String {
+        val ruble = (1 / exch.rate.toDouble()).toString()
+        return "1 USD = $ruble RUB"
+    }
+
+    private fun getFromBtnSuffix(): String {
+        var suffix = ""
+        binding.calcFromBtn.text.let {
+            suffix = it.subSequence(it.length - 3, it.length) as String
+        }
+        return suffix
+    }
+
+    private fun getToBtnSuffix(): String {
+        var suffix = ""
+        binding.calcToBtn.text.let {
+            suffix = it.subSequence(it.length - 3, it.length) as String
+        }
+        return suffix
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun today(): String {
+        val sdf = SimpleDateFormat("dd-MMM-yyyy, hh:mm:ss")
+        return sdf.format(System.currentTimeMillis())
     }
 
     override fun onDestroyView() {
