@@ -15,16 +15,18 @@ import github.idmeetrious.btccalc.R
 import github.idmeetrious.btccalc.databinding.FragmentDialogCurrencyBinding
 import github.idmeetrious.btccalc.view.CurrencyAdapter
 import github.idmeetrious.btccalc.viewmodel.CalcViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 private const val TAG = "CurrencyDialogFragment"
 
 class CurrencyDialogFragment : DialogFragment() {
 
     private val viewModel: CalcViewModel by activityViewModels()
+    private val defaultScope = CoroutineScope(Dispatchers.Default)
+    private val mainScope = CoroutineScope(Dispatchers.Main)
+    private var job: Job? = null
 
     private var _binding: FragmentDialogCurrencyBinding? = null
     private val binding get() = _binding!!
@@ -55,27 +57,34 @@ class CurrencyDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        CoroutineScope(Dispatchers.Main).launch {
-            viewModel.exchangeRates.value.let {
+        viewModel.exchangeRates.value.let {
+            adapter?.updateList(it)
+        }
+
+        job = mainScope.launch {
+            viewModel.exchangeRates.collect {
                 adapter?.updateList(it)
             }
         }
 
-        CoroutineScope(Dispatchers.Main).launch {
-            adapter?.currency?.collect {
-                it?.let {
-                    viewModel.emitCurrency(it)
-                    dismiss()
-                }
-            }
-        }
-        CoroutineScope(Dispatchers.Main).launch {
+//        defaultScope.launch {
+//            adapter?.currency?.collect {
+//                it?.let {
+//                    viewModel.emitCurrency(it)
+//                    Log.i(TAG, "--> onViewCreated: emitCurrency(${it.id})")
+//                    dismiss()
+//                }
+//            }
+//        }
+        job = defaultScope.launch {
             adapter?.exchange?.collect {
                 it?.let {
                     viewModel.emitExchange(it)
+                    Log.i(TAG, "--> onViewCreated: emitExchange(${it.currency})")
                     dismiss()
                 }
             }
+            Log.i(TAG, "--> onViewCreated: defaultScope: Running")
         }
 
         tabLayout?.let {
@@ -92,7 +101,7 @@ class CurrencyDialogFragment : DialogFragment() {
                     }
                     when (selectedTab) {
                         "Currency" -> {
-                            CoroutineScope(Dispatchers.Main).launch {
+                            job = mainScope.launch {
                                 viewModel.exchangeRates.collect {
                                     Log.i(TAG, "--> onTabSelected: ${it.size}")
                                     adapter?.updateList(it)
@@ -142,12 +151,24 @@ class CurrencyDialogFragment : DialogFragment() {
                 window?.setLayout(width, height)
             }
         }
+        Log.i(TAG, "--> onStart: defaultScope.isActive(${defaultScope.isActive})")
+    }
 
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG, "--> onResume: defaultScope.isActive(${defaultScope.isActive})")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.i(TAG, "--> onStop: defaultScope.isActive(${defaultScope.isActive})")
     }
 
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.i(TAG, "--> onDestroyView: ")
         _binding = null
+        job?.cancel()
     }
 }

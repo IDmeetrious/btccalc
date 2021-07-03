@@ -30,10 +30,9 @@ class CalcFragment : Fragment() {
     private var _binding: FragmentCalcBinding? = null
     private val binding get() = _binding!!
 
-    private var fromBtnText = "Bitcoin BTC"
-    private var toBtnText = "Dollar USD"
-
-    private val job = CoroutineScope(Dispatchers.Default) + Job()
+    private val defaultScope = CoroutineScope(Dispatchers.Default + Job())
+    private val mainScope = CoroutineScope(Dispatchers.Main + Job())
+    
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +74,7 @@ class CalcFragment : Fragment() {
                 if (hasFocus) {
                     hint = ""
                     text?.length?.let {
-                        CoroutineScope(Dispatchers.Main).launch {
+                        mainScope.launch {
                             setSelection(it)
                         }
                     }
@@ -121,7 +120,7 @@ class CalcFragment : Fragment() {
             }
         }
 
-        CoroutineScope(Dispatchers.Main).launch {
+        mainScope.launch {
             viewModel.exchangeRates.collect { list ->
 
                 if (list.isNotEmpty()) {
@@ -276,54 +275,41 @@ class CalcFragment : Fragment() {
         binding.calcFromBtn.apply {
             setOnClickListener {
                 currencyDialog?.show(childFragmentManager, "CurrencyDialogFragment")
-//                job.launch {
-//                    viewModel.currency.collect {
-//                        it?.let {
-//                            this@apply.text = it.name
-//                        }
-//                    }
-//                }
-//                job.launch {
-////                    viewModel.exchange.collect {
-////                        it?.let {
-////                            this@apply.text = it.currency
-////                        }
-////                    }
-//                    viewModel.exchange.single()?.let {
-//                        this@apply.text = it.currency
-//                    }
-//                }
-
+                viewModel.emitToBtn(false)
+                viewModel.emitFromBtn(true)
             }
         }
-
-
         binding.calcToBtn.apply {
             setOnClickListener {
-
                 currencyDialog?.show(childFragmentManager, "CurrencyDialogFragment")
-//                job.launch {
-//                    viewModel.currency.collect {
-//                        it?.let {
-//                            this@apply.text = it.name
-//                        }
-//                    }
-//                }
-//                job.launch {
-////                    viewModel.exchange.collect {
-////                        it?.let {
-////                            toBtnText = it.currency
-////                        }
-////                    }
-//                    viewModel.exchange.single()?.let {
-//                        this@apply.text = it.currency
-//                    }
-//                }
-
+                viewModel.emitFromBtn(false)
+                viewModel.emitToBtn(true)
             }
         }
+        mainScope.launch {
+            viewModel.exchange.collect {
+                it?.let {
+                    if (viewModel.fromBtnFlow.value){
+                        binding.calcFromBtn.text = it.currency
+                    } else if (viewModel.toBtnFlow.value)
+                        binding.calcToBtn.text = it.currency
+                }
+            }
+        }
+
     }
 
+    override fun onPause() {
+        super.onPause()
+        Log.i(TAG, "--> onPause: ")
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG, "--> onResume: ")
+    }
+    
     private fun formatRate(exch: Exchange): String {
         return "1 ${exch.currency} = ${exch.rate}"
     }
@@ -358,5 +344,7 @@ class CalcFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        defaultScope.cancel()
+        mainScope.cancel()
     }
 }
